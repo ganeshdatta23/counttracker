@@ -15,7 +15,7 @@ const ago = (days: number) => { const d = new Date(); d.setDate(d.getDate() - da
 const emptyChecklist = (): Checklist => ({ mantra: false, sahasranama: false, astottaranama: false, kavacham: false, panjaram: false, archana: false })
 const make = (days: number, count: number, description = 'Japa'): JapaEntry => ({
   id: `seed-${days}-${count}`, date: ago(days), japa_count: count, checklist: emptyChecklist(), description,
-  malas: Math.floor(count / 108), extra_beads: count % 108, total_count: count, duration_min: 0, mood: undefined, notes: '',
+  total_count: count, duration_min: 0, mood: undefined, notes: '',
   created_at: new Date().toISOString(), updated_at: new Date().toISOString(),
 })
 

@@ -15,10 +15,6 @@ export type JapaEntry = {
   japa_count: number
   checklist: Checklist
   description?: string
-  // Legacy fields are retained only so existing cached rows can be read safely.
-  mantra?: string
-  malas?: number
-  extra_beads: number
   total_count: number
   duration_min?: number
   mood?: Mood

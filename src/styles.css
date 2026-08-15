@@ -110,3 +110,25 @@ main { max-width: 1440px; margin-left: 250px; padding: 0 40px 48px; }
 @media (min-width: 1024px) { .lg\:block { display: block; }.lg\:hidden { display: none; }.lg\:ml-\[250px\] { margin-left: 250px; }.lg\:px-10 { padding-left: 40px; padding-right: 40px; }.lg\:pb-12 { padding-bottom: 48px; } }
 @media (max-width: 1023px) { aside { display: none; } main { margin-left: 0; padding: 0 20px 96px; }.bottom-nav { display: block; } }
 @media (max-width: 639px) { .sm\:grid-cols-2 { grid-template-columns: 1fr; }.sm\:p-7 { padding: 28px; }.sm\:flex-row { flex-direction: row; }.sm\:items-center { align-items: center; }.sm\:justify-between { justify-content: space-between; } .xl\:grid-cols-4, .xl\:grid-cols-\[1\.45fr_1fr\], .lg\:grid-cols-\[1fr_1fr_1\.1fr\] { grid-template-columns: 1fr; } }
+
+/* Final layout pass: one consistent spacing scale across the application. */
+aside { display:flex; flex-direction:column; padding:32px 20px; border-right:1px solid #eadfd1; background:rgba(251,248,242,.88); backdrop-filter:blur(18px); }
+main { width:calc(100% - 250px); max-width:none; margin:0 0 0 250px; padding:0 clamp(20px,4vw,56px) 56px; }
+header { height:78px; display:flex; align-items:center; justify-content:space-between; }
+.nav { display:flex; flex-direction:column; gap:6px; margin-top:52px; }
+.nav button { min-height:44px; }
+.help-card { margin-top:auto; position:static; }
+.hero { min-height:180px; margin:22px 0 22px; padding:30px 34px; }
+.stats-grid { gap:14px; }
+.stat-card { min-height:118px; gap:13px; padding:20px; }
+.stat-card strong { display:block; margin-top:5px; font-family:'Playfair Display'; font-size:29px; line-height:1; }
+.stat-card small { display:block; margin-top:7px; color:#a39890; font-size:11px; }
+.dashboard-grid { gap:14px; margin-top:14px; }
+.panel { padding:22px; }
+.recent-panel { margin-top:14px; }
+.history-row { padding:12px 0; }
+.chart-panel, .offering-panel { min-height:330px; }
+.bottom-nav { display:none; }
+.dark aside { border-color:rgba(255,255,255,.10); background:rgba(25,23,28,.9); }
+@media (max-width:1023px) { aside { display:none; } main { width:100%; margin:0; padding:0 20px 92px; } header { height:70px; } .mobile-brand { display:block; } .date-label { display:none; } .bottom-nav { display:block; } }
+@media (max-width:639px) { main { padding:0 14px 88px; } .hero { min-height:unset; margin:14px 0 14px; padding:22px 20px; border-radius:22px; } h1 { font-size:2.35rem; } .hero-actions { gap:8px; margin-top:18px; } .stats-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; } .stat-card { min-height:105px; padding:15px; gap:9px; border-radius:18px; } .stat-icon { width:34px; height:34px; border-radius:11px; } .stat-card strong { font-size:23px; } .dashboard-grid { gap:10px; margin-top:10px; } .panel { padding:17px; border-radius:20px; } .chart-panel, .offering-panel { min-height:0; } .chart-box { height:200px; } .panel-heading { margin-bottom:13px; } .history-row.large { padding:13px 0; } }

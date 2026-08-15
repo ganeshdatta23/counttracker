@@ -35,8 +35,8 @@ The UI is local-first: it renders immediately from its offline cache, then reads
 
 ## Product behavior
 
-- Entries validate malas and leftover beads (`0-107`) and always recompute total count.
-- The live practice screen increments a 108-bead ring, rolls over to a mala, and provides a soft Web Audio chime.
+- Entries validate nonnegative raw japa counts and always recompute total count.
+- The live practice screen increments one raw japa count at a time.
 - History supports search, edit, and delete confirmation.
 - Theme preference, goal, entries, and seed replacement persist locally.
 - Dashboard charts, streaks, monthly totals, quotes, and recent offerings derive from the same entry collection.
