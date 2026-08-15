@@ -23,4 +23,4 @@ export type JapaEntry = {
   updated_at: string
 }
 
-export type Settings = { dailyGoal: number; sound: boolean; theme: 'light' | 'dark' }
+export type Settings = { dailyGoal: number; sound: boolean }

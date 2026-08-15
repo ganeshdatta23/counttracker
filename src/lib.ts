@@ -5,7 +5,7 @@ const SETTINGS = 'japa-sadhana-settings'
 export const today = () => new Date().toISOString().slice(0, 10)
 export const readEntries = (): JapaEntry[] => { const raw = localStorage.getItem(ENTRIES); return raw ? JSON.parse(raw) : [] }
 export const saveEntries = (entries: JapaEntry[]) => localStorage.setItem(ENTRIES, JSON.stringify(entries))
-export const readSettings = (): Settings => { const raw = localStorage.getItem(SETTINGS); return raw ? JSON.parse(raw) : { dailyGoal: 10000, sound: true, theme: 'light' } }
+export const readSettings = (): Settings => { const raw = localStorage.getItem(SETTINGS); return raw ? JSON.parse(raw) : { dailyGoal: 10000, sound: true } }
 export const saveSettings = (settings: Settings) => localStorage.setItem(SETTINGS, JSON.stringify(settings))
 export const getCount = (entry: Pick<JapaEntry, 'japa_count'>) => Math.max(0, Math.floor(entry.japa_count || 0))
 export const formatCount = (count: number) => new Intl.NumberFormat('en-IN').format(count)

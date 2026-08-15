@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
-import { Activity, CalendarDays, Check, ChevronRight, CircleHelp, Flame, History, Home, Leaf, Menu, Moon, Plus, Search, Settings, Sparkles, Sun, Target, Trash2, X } from 'lucide-react'
+import { Activity, CalendarDays, Check, ChevronRight, CircleHelp, Flame, History, Home, Leaf, Menu, Plus, Search, Settings, Sparkles, Target, Trash2, X } from 'lucide-react'
 import { checklistLabels } from './data'
 import { createRemote, deleteRemote, fetchPublishedSheet, fetchRemoteEntries, hasRemoteApi, updateRemote } from './api'
 import { formatCount, formatDate, getCount, getStreak, readSettings, saveSettings, sum, today } from './lib'
 import type { Checklist, JapaEntry, Settings as AppSettings } from './types'
 
-const card = 'rounded-[24px] border border-[#eadfd1] bg-white/75 shadow-[0_16px_45px_rgba(83,58,37,0.06)] backdrop-blur-sm dark:border-white/10 dark:bg-white/[0.06]'
+const card = 'rounded-[24px] border border-[#eadfd1] bg-white/75 shadow-[0_16px_45px_rgba(83,58,37,0.06)] backdrop-blur-sm'
 const emptyChecklist = (): Checklist => ({ mantra: false, sahasranama: false, astottaranama: false, kavacham: false, panjaram: false, archana: false })
 const uid = () => crypto.randomUUID?.() ?? `${Date.now()}-${Math.random()}`
 
@@ -15,8 +15,7 @@ function App() {
   const [entries, setEntries] = useState<JapaEntry[]>([])
   const [settings, setSettings] = useState<AppSettings>(readSettings)
   const [tab, setTab] = useState('Overview'); const [modal, setModal] = useState<JapaEntry | true | null>(null); const [menuOpen, setMenuOpen] = useState(false)
-  const [dark, setDark] = useState(settings.theme === 'dark'); const [sync, setSync] = useState('local')
-  useEffect(() => { document.documentElement.classList.toggle('dark', dark) }, [dark])
+  const [sync, setSync] = useState('local')
   const refresh = () => { setSync('syncing'); const request = hasRemoteApi ? fetchRemoteEntries() : fetchPublishedSheet(); request.then(remote => { setEntries(remote || []); setSync(hasRemoteApi ? 'synced' : 'sheet-read') }).catch(() => setSync('offline')) }
   useEffect(() => { refresh(); const interval = window.setInterval(refresh, 30000); return () => window.clearInterval(interval) }, [])
   const save = (next: JapaEntry[]) => setEntries(next)
@@ -27,9 +26,9 @@ function App() {
   const remove = (id: string) => { if (!requireWriteApi()) return; if (!confirm('Remove this day from your practice history?')) return; save(entries.filter(entry => entry.id !== id)); remote(deleteRemote(id)) }
   const current = entries.filter(entry => entry.date === today()); const lifetime = sum(entries); const streak = getStreak(entries)
   const navigate = (next: string) => { setTab(next); setMenuOpen(false) }
-  return <div className="min-h-screen bg-[#f7f3eb] text-[#312b29] dark:bg-[#19171c] dark:text-[#f8f1e7]">
+  return <div className="min-h-screen bg-[#f7f3eb] text-[#312b29]">
     <aside><Brand /><Nav current={tab} onChange={navigate} /><div className="help-card"><CircleHelp size={17} /><b>Keep it simple</b><p>One sincere offering is enough for today.</p></div></aside>
-    <main><header><div className="mobile-brand"><button className="menu-button" aria-label="Open navigation" onClick={() => setMenuOpen(true)}><Menu size={21} /></button><Brand /></div><div className="date-label">{new Intl.DateTimeFormat('en', { weekday: 'long', month: 'long', day: 'numeric' }).format(new Date())}</div><div className="header-actions"><button className="icon-button" onClick={() => { setDark(!dark); setSettings({ ...settings, theme: dark ? 'light' : 'dark' }) }}>{dark ? <Sun size={18} /> : <Moon size={18} />}</button><div className="avatar">GD</div></div></header>
+    <main><header><div className="mobile-brand"><button className="menu-button" aria-label="Open navigation" onClick={() => setMenuOpen(true)}><Menu size={21} /></button><Brand /></div><div className="date-label">{new Intl.DateTimeFormat('en', { weekday: 'long', month: 'long', day: 'numeric' }).format(new Date())}</div><div className="header-actions"><div className="avatar">GD</div></div></header>
       {tab === 'Overview' && <Overview entries={entries} current={current} lifetime={lifetime} streak={streak.current} goal={settings.dailyGoal} sync={sync} onAdd={() => setModal(true)} onRefresh={refresh} />}
       {tab === 'History' && <HistoryView entries={entries} onAdd={() => setModal(true)} onEdit={setModal} onDelete={remove} />}
       {tab === 'Practice' && <Practice entries={current} goal={settings.dailyGoal} onSave={add} />}
