@@ -1,0 +1,10 @@
+{
+  "name": "Japa Sadhana Tracker",
+  "short_name": "Japa Sadhana",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f3eb",
+  "theme_color": "#f08b4c",
+  "description": "A calm companion for your daily japa practice.",
+  "icons": []
+}
