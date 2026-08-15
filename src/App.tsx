@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
-import { Activity, CalendarDays, Check, ChevronRight, CircleHelp, Flame, History, Home, Leaf, Moon, Plus, Search, Settings, Sparkles, Sun, Target, Trash2, X } from 'lucide-react'
+import { Activity, CalendarDays, Check, ChevronRight, CircleHelp, Flame, History, Home, Leaf, Menu, Moon, Plus, Search, Settings, Sparkles, Sun, Target, Trash2, X } from 'lucide-react'
 import { checklistLabels } from './data'
 import { createRemote, deleteRemote, fetchPublishedSheet, fetchRemoteEntries, hasRemoteApi, updateRemote } from './api'
 import { formatCount, formatDate, getCount, getStreak, readSettings, saveSettings, sum, today } from './lib'
@@ -14,7 +14,7 @@ const uid = () => crypto.randomUUID?.() ?? `${Date.now()}-${Math.random()}`
 function App() {
   const [entries, setEntries] = useState<JapaEntry[]>([])
   const [settings, setSettings] = useState<AppSettings>(readSettings)
-  const [tab, setTab] = useState('Overview'); const [modal, setModal] = useState<JapaEntry | true | null>(null)
+  const [tab, setTab] = useState('Overview'); const [modal, setModal] = useState<JapaEntry | true | null>(null); const [menuOpen, setMenuOpen] = useState(false)
   const [dark, setDark] = useState(settings.theme === 'dark'); const [sync, setSync] = useState('local')
   useEffect(() => { document.documentElement.classList.toggle('dark', dark) }, [dark])
   const refresh = () => { setSync('syncing'); const request = hasRemoteApi ? fetchRemoteEntries() : fetchPublishedSheet(); request.then(remote => { setEntries(remote || []); setSync(hasRemoteApi ? 'synced' : 'sheet-read') }).catch(() => setSync('offline')) }
@@ -26,14 +26,16 @@ function App() {
   const update = (input: JapaEntry) => { if (!requireWriteApi()) return; const next = { ...input, japa_count: Math.max(0, Math.floor(input.japa_count || 0)), total_count: Math.max(0, Math.floor(input.japa_count || 0)), updated_at: new Date().toISOString() }; save(entries.map(entry => entry.id === next.id ? next : entry)); remote(updateRemote(next)); setModal(null) }
   const remove = (id: string) => { if (!requireWriteApi()) return; if (!confirm('Remove this day from your practice history?')) return; save(entries.filter(entry => entry.id !== id)); remote(deleteRemote(id)) }
   const current = entries.filter(entry => entry.date === today()); const lifetime = sum(entries); const streak = getStreak(entries)
+  const navigate = (next: string) => { setTab(next); setMenuOpen(false) }
   return <div className="min-h-screen bg-[#f7f3eb] text-[#312b29] dark:bg-[#19171c] dark:text-[#f8f1e7]">
-    <aside><Brand /><Nav current={tab} onChange={setTab} /><div className="help-card"><CircleHelp size={17} /><b>Keep it simple</b><p>One sincere offering is enough for today.</p></div></aside>
-    <main><header><div className="mobile-brand"><Brand compact /></div><div className="date-label">{new Intl.DateTimeFormat('en', { weekday: 'long', month: 'long', day: 'numeric' }).format(new Date())}</div><div className="header-actions"><button className="icon-button" onClick={() => { setDark(!dark); setSettings({ ...settings, theme: dark ? 'light' : 'dark' }) }}>{dark ? <Sun size={18} /> : <Moon size={18} />}</button><div className="avatar">AS</div></div></header>
+    <aside><Brand /><Nav current={tab} onChange={navigate} /><div className="help-card"><CircleHelp size={17} /><b>Keep it simple</b><p>One sincere offering is enough for today.</p></div></aside>
+    <main><header><div className="mobile-brand"><button className="menu-button" aria-label="Open navigation" onClick={() => setMenuOpen(true)}><Menu size={21} /></button><Brand compact /></div><div className="date-label">{new Intl.DateTimeFormat('en', { weekday: 'long', month: 'long', day: 'numeric' }).format(new Date())}</div><div className="header-actions"><button className="icon-button" onClick={() => { setDark(!dark); setSettings({ ...settings, theme: dark ? 'light' : 'dark' }) }}>{dark ? <Sun size={18} /> : <Moon size={18} />}</button><div className="avatar">AS</div></div></header>
       {tab === 'Overview' && <Overview entries={entries} current={current} lifetime={lifetime} streak={streak.current} goal={settings.dailyGoal} sync={sync} onAdd={() => setModal(true)} onRefresh={refresh} />}
       {tab === 'History' && <HistoryView entries={entries} onAdd={() => setModal(true)} onEdit={setModal} onDelete={remove} />}
       {tab === 'Practice' && <Practice entries={current} goal={settings.dailyGoal} onSave={add} />}
       {tab === 'Settings' && <SettingsView settings={settings} update={next => { setSettings(next); saveSettings(next) }} />}
-    </main><nav className="bottom-nav"><Nav current={tab} onChange={setTab} mobile /></nav>
+    </main>
+    <AnimatePresence>{menuOpen && <motion.div className="mobile-menu-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setMenuOpen(false)}><motion.div className="mobile-menu" initial={{ x: -280 }} animate={{ x: 0 }} exit={{ x: -280 }} onClick={event => event.stopPropagation()}><div className="mobile-menu-head"><Brand /><button className="icon-button" onClick={() => setMenuOpen(false)}><X size={18} /></button></div><Nav current={tab} onChange={navigate} /><div className="mobile-menu-note"><Sparkles size={16} /> Your practice is yours.</div></motion.div></motion.div>}</AnimatePresence>
     <AnimatePresence>{modal && <EntryModal initial={modal === true ? undefined : modal} onClose={() => setModal(null)} onSave={modal === true ? add : entry => update(entry as JapaEntry)} />}</AnimatePresence>
   </div>
 }
