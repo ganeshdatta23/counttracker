@@ -28,7 +28,22 @@ The production build is `npm run build` and can be deployed to Vercel, Netlify, 
 The Apps Script endpoint supports `GET` reads and `POST` actions for create, update, and delete. This is the reliable REST shape available to Apps Script web apps:
 
 ```json
-{ "action": "create", "entry": { "date": "2026-08-15", "japa_count": 9938, "description": "Entry", "checklist": { "mantra": false, "sahasranama": false, "astottaranama": false, "kavacham": false, "panjaram": false, "archana": false } } }
+{
+  "action": "create",
+  "entry": {
+    "date": "2026-08-15",
+    "japa_count": 9938,
+    "description": "Entry",
+    "checklist": {
+      "mantra": false,
+      "sahasranama": false,
+      "astottaranama": false,
+      "kavacham": false,
+      "panjaram": false,
+      "archana": false
+    }
+  }
+}
 ```
 
 The UI is local-first: it renders immediately from its offline cache, then reads the supplied Google Sheet's published `Sheet1` tab directly. Full create/edit/delete sync becomes active after the Apps Script deployment URL is pasted into `src/api.ts`. If the network is unavailable, the app remains usable and visibly reports `Offline`.
